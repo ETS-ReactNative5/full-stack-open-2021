@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
+import personService from './services/persons'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -11,12 +13,16 @@ const App = () => {
     number: '',
   })
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState({
+    text: null,
+    type: '',
+  })
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -26,9 +32,29 @@ const App = () => {
     const isDupe = persons.find((item) => item.name === newPerson.name)
 
     if (isDupe) {
-      alert(`${newPerson.name} is already added to phonebook`)
+      const updateConfirm = window.confirm(`${isDupe.name} is already added to phonebook, replace the old number with a new one?`)
+
+      if (updateConfirm) {
+        personService
+          .update(isDupe.id, newPerson)
+          .then((returnedPerson) => {
+            setPersons(persons.map(item => item.id !== isDupe.id ? item : returnedPerson))
+            setMessage({ text: `Updated ${isDupe.name}`, type: 'success'})
+            setTimeout(() => setMessage({ text: null, type: '' }), 5000)
+          })
+          .catch(() => {
+            setMessage({ text: `Information of ${isDupe.name} has already been removed from the server`, type: 'error'})
+            setTimeout(() => setMessage({ text: null, type: '' }), 5000)
+          })
+      }
     } else {
-      setPersons(persons.concat(newPerson))  
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setMessage({ text: `Added ${returnedPerson.name}`, type: 'success'})
+          setTimeout(() => setMessage({ text: null, type: '' }), 5000)
+        })
     }
     setNewPerson({ name: '', number: '' })
   }
@@ -37,9 +63,22 @@ const App = () => {
     setNewPerson({ ...newPerson, [e.target.name]: e.target.value })
   }
 
+  const handleDelete = (person) => {
+    const deleteConfirm = window.confirm(`Delete ${person.name}`)
+
+    if (deleteConfirm) {
+      personService
+        .remove(person.id)
+        .then(() => {
+          setPersons(persons.filter(item => item.id !== person.id))
+        })
+    }
+  }
+
   return (
     <>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter
         onChange={(e) => setFilter(e.target.value)}
         value={filter}
@@ -53,7 +92,11 @@ const App = () => {
       />
       
       <h3>Numbers</h3>
-      <Persons persons={persons} search={filter} />
+      <Persons
+        persons={persons}
+        onClick={handleDelete}
+        search={filter}
+      />
     </>
   )
 }
