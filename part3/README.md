@@ -1,3 +1,3 @@
 # Link to online application
 
-https://pacific-dusk-75128.herokuapp.com/api/persons
+https://pacific-dusk-75128.herokuapp.com
