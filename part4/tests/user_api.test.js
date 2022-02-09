@@ -7,16 +7,16 @@ const api = supertest(app)
 
 const User = require('../models/user')
 
+beforeEach(async () => {
+  await User.deleteMany({})
+
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', passwordHash })
+
+  await user.save()
+})
+
 describe('when there is initially one user in db', () => {
-  beforeEach(async () => {
-    await User.deleteMany({})
-
-    const passwordHash = await bcrypt.hash('sekret', 10)
-    const user = new User({ username: 'root', passwordHash })
-
-    await user.save()
-  })
-
   test('creation succeeds with a fresh username', async () => {
     const usersAtStart = await helper.usersInDb()
 
@@ -26,8 +26,7 @@ describe('when there is initially one user in db', () => {
       password: 'salainen',
     }
 
-    await api
-      .post('/api/users')
+    await api.post('/api/users')
       .send(newUser)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -39,7 +38,7 @@ describe('when there is initially one user in db', () => {
     expect(usernames).toContain(newUser.username)
   })
 
-  test('creation fails with proper statuscode and message if username already taken', async () => {
+  test('creation fails with status code 400 and proper message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
@@ -48,8 +47,7 @@ describe('when there is initially one user in db', () => {
       password: 'salainen',
     }
 
-    const result = await api
-      .post('/api/users')
+    const result = await api.post('/api/users')
       .send(newUser)
       .expect(400)
       .expect('Content-Type', /application\/json/)
@@ -60,8 +58,28 @@ describe('when there is initially one user in db', () => {
     expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
 
-  afterAll(() => {
-    mongoose.connection.close()
+  test('creation fails with status code 400 and proper message if username or password are shorter than allowed', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'r',
+      name: 'Superuser',
+      password: 's',
+    }
+
+    const result = await api.post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('username or password are shorter than allowed (minimum length: 3)')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
   })
+})
+
+afterAll(() => {
+  mongoose.connection.close()
 })
 
