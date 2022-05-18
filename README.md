@@ -17,10 +17,6 @@ The following repositories include the exercise submissions of the [Full Stack O
 - [Part 8](https://github.com/smartido/full-stack-open-2021/tree/main/part8) - GraphQL
 - [Part 9](https://github.com/smartido/full-stack-open-2021/tree/main/part9) - TypeScript
 
-#### Related repositories
+## Related repositories
 
 - [Part 10](https://github.com/smartido/rate-repository-app) - React Native
-
-Course material: [https://fullstackopen.com/en](https://fullstackopen.com/en)
-
-Certification: [4475cfd2d2098a0bf32e3bb1622c9c4a](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/4475cfd2d2098a0bf32e3bb1622c9c4a)
