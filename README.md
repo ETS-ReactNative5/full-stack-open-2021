@@ -23,4 +23,4 @@ The following repositories include the exercise submissions of the [Full Stack O
 
 ## Certification
 
-<img src="https://github.com/smartido/full-stack-open-2021/blob/main/assets/certificate-fullstack.png?raw=true" width="500">
+<img src="https://github.com/smartido/full-stack-open-2021/blob/main/assets/certificate-fullstack.png?raw=true" width="320">
