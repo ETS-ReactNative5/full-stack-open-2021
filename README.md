@@ -19,8 +19,7 @@ The following repositories include the exercise submissions of the [Full Stack O
 
 ## Related repositories
 
-- [Part 10](https://github.com/smartido/full-stack-open-2021/tree/main/part10) - React Native
-- [Part 11](https://github.com/smartido/full-stack-open-2021/tree/main/part11) - CI/CD
+- [Part 10](https://github.com/smartido/rate-repository-app) - React Native
 
 ## Certification
 
