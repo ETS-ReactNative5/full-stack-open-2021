@@ -20,6 +20,7 @@ The following repositories include the exercise submissions of the [Full Stack O
 ## Related repositories
 
 - [Part 10](https://github.com/smartido/rate-repository-app) - React Native
+- [Part 11](https://github.com/smartido/full-stack-open-pokedex) - CI/CD
 
 ## Certification
 
